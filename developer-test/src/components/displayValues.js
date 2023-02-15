@@ -1,12 +1,13 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { dataContext } from '../data/context';
 
 
 export default function  () {
 
-    const {queryRsult, insertRecords } = useContext(dataContext);
+    const { insertRecords, queryRsult, upDateRecords } = useContext(dataContext);
+    const [sdata, setsData ] = useState(false);
     const [showEdit, setShowEdit ] = useState(false);
-    const [ showUpdateEdit, setShowUpdateEdit ] = useState(true);
+    const [ showUpdateEdit, setShowUpdateEdit ] = useState(false);
     const [errmsg, setErrMsg ] = useState(false);
     const [supplier, setSupplier ] = useState("");
     const [whole_seller, setWholeSeller ] = useState("");
@@ -16,6 +17,22 @@ export default function  () {
     const [variant, setVariant ] = useState("");
     const [color, setColor ] = useState("");
     const [txtUpdate, setTxtUpdate ] = useState("");
+    const [supdate, setsupdate] = useState(null);
+    const [values, setValues ] = useState({
+        jan_qty: '',
+            feb_qty: '',
+            mar_qty: '',
+            apr_qty: '',
+            may_qty: '',
+            jun_qty:'',
+            jul_qty: '',
+            aug_qty: '',
+            sep_qty: '',
+            oct_qty: '',
+            nov_qty: '',
+            dec_qty: ''
+
+    })
 
     const handleSupplierChange = (e) => {
         setSupplier(e.target.value);
@@ -48,39 +65,118 @@ export default function  () {
         
     }
     let msg = ''
-    if(queryRsult[0]["SUM(demand_quantity"]) msg = queryRsult[0]["SUM(demand_quantity"];
-    else msg = 'no results founds'
+    /* if(queryRsult[0]["SUM(demand_quantity"]) msg = queryRsult[0]["SUM(demand_quantity"];
+    else msg = 'no results founds' */
     const handleUpdateChange = (e) => {
         setTxtUpdate(e.target.value);
     }
-    const handleUpdateSubmit = () => {
+    const handleShowElementSubmit = (element) => {
+        setShowUpdateEdit(true);
+        setsupdate({id: element.id, 
+            jan_qty: element.jan_qty,
+            feb_qty: element.feb_qty,
+            mar_qty: element.mar_qty,
+            apr_qty: element.apr_qty,
+            may_qty: element.may_qty,
+            jun_qty: element.jun_qty,
+            jul_qty: element.jul_qty,
+            aug_qty: element.aug_qty,
+            sep_qty: element.sep_qty,
+            oct_qty: element.oct_qty,
+            nov_qty: element.nov_qty,
+            dec_qty: element.dec_qty
+        })
 
+        
+       
     }
+    const handlePatchUpdate = (e) => {
+        const sendData = {id: e.target.id, ...values}
+        upDateRecords(sendData);
+    }
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setValues({ ...values, [name]: value });
+      };
+    
+    useEffect(()=> {
+        
+        if(queryRsult)  {
+            console.log(queryRsult)
+            setsData(true);
+          
+        }
+    }, [queryRsult, sdata])
+   
     return(
         <div style={styles.container}>
-            <div style={styles.titles}>
-                <div style={styles.editSvg}>
-                    <h3> selected { msg } </h3>
-                    { showUpdateEdit ? ( <button onClick={() => {setShowUpdateEdit(!showUpdateEdit)}}> Update record </button>) : (
-                    <div> 
-                       <input type="text" placeholder='updated record ..' onChange={handleUpdateChange} />
-                        <button onClick={handleUpdateSubmit}> update record</button>
-                    </div>
-                    )}
-
+           
+            <h3> selected quatities  </h3>
+            <div>
+                <div style={styles.titles_headers}>
+                    <h4 className='title-head'> jan</h4>
+                    <h4 className='title-head'> feb</h4>
+                    <h4 className='title-head'> mar</h4>
+                    <h4 className='title-head'> apr</h4>
+                    <h4 className='title-head'> may</h4>
+                    <h4 className='title-head'> jun</h4>
+                    <h4 className='title-head'> jul</h4>
+                    <h4 className='title-head'> aug</h4>
+                    <h4 className='title-head'> sep</h4>
+                    <h4 className='title-head'> oct</h4>
+                    <h4 className='title-head'> nov</h4>
+                    <h4 className='title-head end-row'> dec</h4>
+                    
                 </div>
-
-                 
-            </div>
-            <div style={styles.titles}>
-            <p className='title-body'>{}</p>
+                { sdata ? (<div>
+                    {queryRsult.map(element => {
+                        return(
+                            <div style={styles.titles_headers} id={element.id} onClick={() => handleShowElementSubmit(element)}> 
+                                <h4 className='title-head'> {element.jan_qty}</h4>
+                                <h4 className='title-head'> {element.feb_qty}</h4>
+                                <h4 className='title-head'> {element.mar_qty}</h4>
+                                <h4 className='title-head'> {element.apr_qty}</h4>
+                                <h4 className='title-head'> {element.may_qty}</h4>
+                                <h4 className='title-head'> {element.jun_qty}</h4>
+                                <h4 className='title-head'> {element.jul_qty}</h4>
+                                <h4 className='title-head'> {element.aug_qty}</h4>
+                                <h4 className='title-head'> {element.sep_qty}</h4>
+                                <h4 className='title-head'> {element.oct_qty}</h4>
+                                <h4 className='title-head'> {element.nov_qty}</h4>
+                                <h4 className='title-head end-row'> {element.dec_qty}</h4>
+                                <button style={{margin: '1rem'}}> update record</button>
+                                
+                            </div>
+                        )
+                    })}
+                </div>) : (<p> query is null</p>)}
+                {showUpdateEdit ? (
+                    <div  >
+                        <input type="text" onChange={handleInputChange}  name='jan_qty' placeholder={supdate.jan_qty} value={values.jan_qty} />
+                        <input type="text" onChange={handleInputChange} name='feb_qty' placeholder={supdate.feb_qty} value={values.feb_qty}/>
+                        <input type="text" onChange={handleInputChange} name='mar_qty'  placeholder={supdate.mar_qty} value={values.mar_qty}/>
+                        <input type="text" onChange={handleInputChange} name='apr_qty'  placeholder={supdate.apr_qty} value={values.apr_qty}/>
+                        <input type="text" onChange={handleInputChange} name='may_qty'  placeholder={supdate.may_qty} value={values.may_qty}/>
+                        <input type="text" onChange={handleInputChange} name='jun_qty'  placeholder={supdate.jun_qty} value={values.jun_qty}/>
+                        <input type="text" onChange={handleInputChange} name='jul_qty'  placeholder={supdate.jul_qty} value={values.jul_qty}/>
+                        <input type="text" onChange={handleInputChange} name='aug_qty'  placeholder={supdate.aug_qty} value={values.aug_qty}/>
+                        <input type="text" onChange={handleInputChange} name='sep_qty'  placeholder={supdate.sep_qty} value={values.sep_qty}/>
+                        <input type="text" onChange={handleInputChange} name='oct_qty'  placeholder={supdate.oct_qty} value={values.oct_qty}/>
+                        <input type="text" onChange={handleInputChange} name='nov_qty'  placeholder={supdate.nov_qty} value={values.nov_qty} />
+                        <input type="text" onChange={handleInputChange} name='dec_qty'  placeholder={supdate.dec_qty} value={values.dec_qty}/>
+                        <button id={supdate.id} onClick={handlePatchUpdate} style={{margin: '1rem'}}> submit update</button>
+                    </div>
+                    ): (<></>)
+                    }
                 
             </div>
+            
+
+               
 
            { !showEdit ? ( 
            <div style={styles.editSvg} onClick={() => {setShowEdit(!showEdit);}}>
                 <p> New record </p>
-                <svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path opacity="0.4" d="M11 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22H15C20 22 22 20 22 15V13" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M16.0399 3.01976L8.15988 10.8998C7.85988 11.1998 7.55988 11.7898 7.49988 12.2198L7.06988 15.2298C6.90988 16.3198 7.67988 17.0798 8.76988 16.9298L11.7799 16.4998C12.1999 16.4398 12.7899 16.1398 13.0999 15.8398L20.9799 7.95976C22.3399 6.59976 22.9799 5.01976 20.9799 3.01976C18.9799 1.01976 17.3999 1.65976 16.0399 3.01976Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path> <path opacity="0.4" d="M14.9102 4.1499C15.5802 6.5399 17.4502 8.4099 19.8502 9.0899" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
             </div>) : (
                 <div style={styles.editable}>
                     <input type="text" value={supplier} onChange={handleSupplierChange} id="Supplier" placeholder="Supplier ..." />
@@ -108,6 +204,11 @@ const styles = {
         display: 'flex',
         flex: 1,
         flexDirection: 'column'
+    },
+    titles_headers: {
+        display: 'flex',
+        flex: 1,
+        flexDirection: 'row'
     },
     
     titles: {

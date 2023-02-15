@@ -9,7 +9,7 @@ const db = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'dummy_data'
+    database: 'dummy_db'
 })
 
 app.use(cors());
@@ -25,28 +25,26 @@ app.get('/api/fetch', (req, res) => {
 });
 
 app.get('/api/querydata', (req, res) => {
-    const supplier = req.body.supplier;
-    const wholeSeller = req.body.seller;
-    const steeringType = req.body.steering;
-    const model = req.body.model;
-    const sfx = req.body.sfx;
-    const variant = req.body.variant;
-    const color = req.body.color;
-    const data = req.query;
-    console.log(data.seller);
-    
-    const sqlQuery = `SELECT SUM(demand_quantity)
-    FROM filtered_records
-    WHERE 
-        supplier_id = (SELECT id FROM selected_options WHERE option_name = ? )
-        OR whole_seller_id = (SELECT id FROM selected_options WHERE option_name = ? )
-        OR sfx_id = (SELECT id FROM selected_options WHERE option_name = ? )
-        OR variant_id = (SELECT id FROM selected_options WHERE option_name = ? )
-        OR color_id = (SELECT id FROM selected_options WHERE option_name = ? )
-        OR model_id = (SELECT id FROM selected_options WHERE option_name = ? )
-        OR steering_type_id = (SELECT id FROM selected_options WHERE option_name = ? );
-        `;
-    db.query(sqlQuery, [supplier, wholeSeller, sfx, variant, color, model, steeringType ], (err, result) => {
+     const supplier = req.query.supplier;
+    const wholeSeller = req.query.seller;
+    const steeringType = req.query.steering;
+    const model = req.query.model;
+    const sfx = req.query.sfx;
+    const variant = req.query.variant;
+    const color = req.query.color | 1;
+
+
+    const sqlQuery = `SELECT * FROM records
+    WHERE
+        supplier_id = ? OR
+        whole_seller_id = ? OR
+        steering_type_id = ? OR
+        car_model_id = ? OR
+        car_sfx_id = ? OR
+        car_variant_id = ? OR
+        color_id = ?;
+    `;
+    db.query(sqlQuery, [supplier, wholeSeller, steeringType, model, sfx, variant, color ], (err, result) => {
         if (err) res.send(err)
         else {
             res.send(result)
@@ -68,6 +66,30 @@ app.post('/api/insert', (req, res) => {
     });
 });
 
+app.patch('/api/patch', (req, res) => {
+    const { jan_qty, feb_qty, mar_qty, apr_qty, may_qty, jun_qty, jul_qty, aug_qty, sep_qty, oct_qty, nov_qty, dec_qty } = req.body;
+    const sqlQuery = `UPDATE car_demand
+    SET jan_qty = ?,
+        feb_qty = ?,
+        mar_qty = ?,
+        apr_qty = ?,
+        may_qty = ?,
+        jun_qty = ?,
+        jul_qty = ?,
+        aug_qty = ?,
+        sep_qty = ?,
+        oct_qty = ?,
+        nov_qty = ?,
+        dec_qty = ?
+    WHERE id = your_record_id;
+    `;
+
+    db.query(sqlQuery, [jan_qty, feb_qty, mar_qty, apr_qty, may_qty, jun_qty, jul_qty, aug_qty, sep_qty, oct_qty, nov_qty, dec_qty, id], (res, err) => {
+        if(err) console.log(err);
+        else console.log(res);
+    } )
+
+})
 app.listen(port, () => {
     console.log(`server is running on port ${port}`);
 });

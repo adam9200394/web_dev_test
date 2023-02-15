@@ -32,7 +32,8 @@ export default function () {
     handleSteeringChange(e);
     handleBtnstate();
     setTotalValues(optionValue);
-    console.log(optionValue)
+    
+    
     
 
     }
@@ -41,6 +42,7 @@ export default function () {
         handlepageOne(optionValue);
         if(pageOneOptions) {
             setOptionsLoaded(true);
+            setTotalValues(optionValue);
         }
         
     }, [optionValue, pageOneOptions]);
@@ -52,7 +54,7 @@ export default function () {
                     <select onChange={(e) => {handleSupplierChange(e); handleProgress() }} id="supplier">
                         <option value=""> Suppliers </option>
                         { !optionsLoaded ? (<option value="Whole Seller One"> supplier  </option>) : (
-                            pageOneOptions.suppliers.map(element => (<option value={element} key={element}> {element}</option>))
+                            pageOneOptions.Suppliers.map(element => (<option value={element.id} key={element.id}> {element.value}</option>))
                         )}
                     </select>
                 </div>
@@ -62,7 +64,7 @@ export default function () {
                     <select onChange={(e) => {handleSellerChange(e); handleProgress() }} id="whole_seller">
                         <option value=""> Whole Sellers </option>
                         { !optionsLoaded ? (<option value="Whole Seller One"> Whole sellers  </option>) : (
-                            pageOneOptions.wholeSellers.map(element => (<option value={element} key={element} > {element}</option>))
+                            pageOneOptions.WholeSellers.map(element => (<option value={element.id} key={element.id} > {element.value}</option>))
                         )}
                     </select>
                 </div>
@@ -72,7 +74,7 @@ export default function () {
                     <select onChange={handleLast} id="supplier">
                     <option value=""> Steering Type </option>
                         { !optionsLoaded ? (<option value="Whole Seller One"> Steering type  </option>) : (
-                            pageOneOptions.steeringTypes.map(element => (<option value={element} key={element}> {element}</option>))
+                            pageOneOptions.SteeringType.map(element => (<option value={element.id} key={element.id}> {element.value}</option>))
                         )}
                     </select>
                 </div>

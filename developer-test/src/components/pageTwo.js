@@ -8,7 +8,7 @@ export default function () {
     const [optionValue2, setOptionValues2 ] = useState({Model: '', SFX: '', Variant: '', Color: '' });
     const [ optionsLoaded, setOptionsLoaded ] = useState(false);
 
-    const { handlePageTwo, totalValue, setTotalValues, setShowBtn,currentStep2, setCurrentStep2,  handleProgress, handleBtnstate, pageTwoOptions, getQueryResult, queryRsult } = useContext(dataContext);
+    const { handlePageTwo, totalValue, setTotalValues, setShowBtn,currentStep2, setCurrentStep2,  handleProgress, handleBtnstate, pageTwoOptions, getQueryResult } = useContext(dataContext);
 
     
 
@@ -43,12 +43,16 @@ export default function () {
     setShowBtn(false);
     getQueryResult(totalValue.supplier, totalValue.wholeSeller, totalValue.steeringType, optionValue2.Model, optionValue2.SFX, optionValue2.Variant, optionValue2.Color);
     setCurrentStep2(currentStep2 + 1);
+    
+
     }
 
     useEffect(() => {
         handlePageTwo(optionValue2);
         if(pageTwoOptions) {
             setOptionsLoaded(true);
+           
+           
         }
         
     }, [optionValue2, pageTwoOptions, totalValue])
@@ -60,7 +64,7 @@ export default function () {
                 <select  onChange={(e) => {handleModelChange(e); handleProgress() }}>
                         <option value=""> Car Model </option>
                         { !optionsLoaded ? (<option value="Whole Seller One"> Car Model  </option>) : (
-                            pageTwoOptions.models.map(element => (<option value={element} key={element}> {element}</option>))
+                            pageTwoOptions.Models.map(element => (<option value={element.id} key={element.id}> {element.value}</option>))
                         )}
                     </select>
                 </div>
@@ -70,7 +74,7 @@ export default function () {
                 <select  onChange={(e) => {handleSFXChange(e); handleProgress() }}>
                         <option value=""> Car SFX </option>
                         { !optionsLoaded ? (<option value="Whole Seller One"> Car SFX  </option>) : (
-                            pageTwoOptions.sfxs.map(element => (<option value={element} key={element}> {element}</option>))
+                            pageTwoOptions.Sfx.map(element => (<option value={element.id} key={element.id}> {element.value}</option>))
                         )}
                     </select>
                 </div>
@@ -79,9 +83,9 @@ export default function () {
                 <div style={styles.Option}>
                 <select  onChange={(e) => {handleVariantChange(e); handleProgress() }}>
                         <option value=""> Car Variant </option>
-                        <option value="SomeCar_1">SomeCar_1</option>
-                        <option value="SomeCar_2">SomeCar_2</option>
-                        <option value="SomeCar_1">SomeCar_1</option>
+                        { !optionsLoaded ? (<option value="Whole Seller One"> Car Model  </option>) : (
+                            pageTwoOptions.Variant.map(element => (<option value={element.id} key={element.id}> {element.value}</option>))
+                        )}
                     </select>
                 </div>
             )}
@@ -90,7 +94,7 @@ export default function () {
                 <select onChange={handleLast}>
                         <option value=""> Color </option>
                         { !optionsLoaded ? (<option value="Whole Seller One"> Car Model  </option>) : (
-                            pageTwoOptions.colors.map(element => (<option value={element} key={element}> {element}</option>))
+                            pageTwoOptions.Colors.map(element => (<option value={element.id} key={element.id}> {element.value}</option>))
                         )}
                     </select>
                 </div>
